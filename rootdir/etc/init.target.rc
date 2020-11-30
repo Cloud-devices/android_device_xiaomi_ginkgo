@@ -56,6 +56,11 @@ on init
     write /sys/block/sde/queue/read_ahead_kb 2048
     write /sys/block/sde/queue/nr_requests 256
 
+# Tianma panel burnin hack
+on property:persist.has.tianma_panel=true
+    write /sys/devices/platform/kcal_ctrl.0/kcal_enable 1
+    write /sys/devices/platform/kcal_ctrl.0/kcal "230 230 230"
+
 on early-fs
     start vold
 

@@ -15,6 +15,8 @@
  */
 
 #include <cstdlib>
+#include <cstdio>
+#include <fstream>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 #include <sys/sysinfo.h>
@@ -34,6 +36,20 @@ void property_override(string prop, string value)
         __system_property_update(pi, value.c_str(), value.size());
     else
         __system_property_add(prop.c_str(), prop.size(), value.c_str(), value.size());
+}
+
+bool has_tianma_panel()
+{
+    std::ifstream cmdline("/proc/cmdline");
+    string line;
+    bool ret = false;
+
+    std::getline(cmdline, line);
+    if (line.find("tianma") != string::npos)
+        ret = true;
+
+    cmdline.close();
+    return ret;
 }
 
 void vendor_load_properties()
@@ -110,4 +126,6 @@ void vendor_load_properties()
     property_override("dalvik.vm.heaptargetutilization", heaptargetutilization);
     property_override("dalvik.vm.heapminfree", heapminfree);
     property_override("dalvik.vm.heapmaxfree", heapmaxfree);
+    // Tianma panel burnin hack
+    property_override("persist.has.tianma_panel", has_tianma_panel() ? "true" : "false");
 }
